@@ -1,0 +1,50 @@
+{
+    "name": "Elden LeetCode",
+    "description": "Elden Ring experience for LeetCode",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_icon": {
+            "16": "assets/icon16.png",
+            "24": "assets/icon24.png",
+            "32": "assets/icon32.png"
+        },
+        "default_title": "My Extension Popup",
+        "default_popup": "popup.html"
+    },
+    "icons": {
+        "16": "assets/icon16.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png"
+    },
+    "permissions": [
+    "webRequest", 
+    "scripting",
+    "activeTab"
+  ],
+    "host_permissions": ["https://leetcode.com/*"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://leetcode.com/*"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["banners/*"],
+            "matches": ["<all_urls>"]
+        },
+        {
+            "resources": ["sounds/*"],
+            "matches": ["<all_urls>"]
+        },
+        {
+            "resources": ["assets/*"],
+            "matches": ["<all_urls>"]
+        }
+    ]
+}
