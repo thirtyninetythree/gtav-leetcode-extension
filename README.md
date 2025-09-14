@@ -34,3 +34,7 @@ Enhance your LeetCode experience with Elden Ring–inspired notifications and ac
 ## Contributing
 
 Contributions are welcome. Please submit issues or enhancement requests.
+
+## Credits
+
+Inspired by [this X post](https://x.com/saltyAom/status/1966608243167555734).
