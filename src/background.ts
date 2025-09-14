@@ -209,12 +209,22 @@ const matchLeetCodeGraphQL = (detail: WebRequestDetails, operationName: string):
 
 async function fetchSubmissionResult(submissionId: string, tabId: number): Promise<void> {
     try {
+        const pending = pendingSubmissions.get(tabId);
+        
+        if (!pending || pending.hasDispatched) {
+            console.log('Submission already processed or invalid tab ID');
+            return;
+        }
+
         const url = `https://leetcode.com/submissions/detail/${submissionId}/check/`;
         console.log(`Polling submission result from: ${url}`);
         
         const response = await fetch(url, {
             credentials: 'include',
-            headers: { 'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (compatible; LeetCode Extension)' }
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         
         if (!response.ok) {
@@ -227,9 +237,9 @@ async function fetchSubmissionResult(submissionId: string, tabId: number): Promi
         
         const status = data.state; 
         const statusDisplay = data.status_display || '';
-        const statusCode = data.status_code;
-
-        let action: Actions | null = null;
+        const statusCode = data.status_code || 0;
+        
+        let action: string | null = null;
         
         if (status === 'SUCCESS' && (statusCode === 10 || statusDisplay === 'Accepted')) {
             action = 'submissionAccepted';
@@ -238,7 +248,6 @@ async function fetchSubmissionResult(submissionId: string, tabId: number): Promi
         } else {
             console.log('Submission still pending, state:', status, 'display:', statusDisplay);
             
-            const pending = pendingSubmissions.get(tabId);
             if (pending) {
                 const retryCount = (pending.retryCount || 0) + 1;
                 if (retryCount < 15) { 
@@ -255,10 +264,12 @@ async function fetchSubmissionResult(submissionId: string, tabId: number): Promi
             return; 
         }
 
-        if (action) {
+        if (action && !pending.hasDispatched) {
             console.log(`Determined final action: ${action} for state: ${status}`);
-            dispatch(action, { url: '', method: 'POST', tabId });
-            pendingSubmissions.delete(tabId);
+            pending.hasDispatched = true;
+            pendingSubmissions.set(tabId, pending);
+            dispatch(action as Actions, { url: '', method: 'POST', tabId });
+            setTimeout(() => pendingSubmissions.delete(tabId), 10000);  
         }
         
     } catch (error) {
@@ -276,6 +287,7 @@ async function fetchSubmissionResult(submissionId: string, tabId: number): Promi
         }
     }
 }
+
 function extractSubmissionId(url: string): string | null {
     const match = url.match(/\/submissions\/detail\/(\d+)\/check\//);
     return match ? match[1] : null;
@@ -283,15 +295,22 @@ function extractSubmissionId(url: string): string | null {
 
 chrome.webRequest.onBeforeRequest.addListener(
     (detail: WebRequestDetails) => {
-        console.log('Request intercepted:', detail.url, detail.method);
-        
-        if (detail.url === 'https://leetcode.com/graphql') {
-            const body = readBody(detail);
+        if (pendingSubmissions.has(detail.tabId)) {
+            return;
+        }
+
+        if (detail.method === 'POST' && detail.requestBody) {
+            const decoder = new TextDecoder('utf-8');
+            const body = decoder.decode(detail.requestBody.raw?.[0]?.bytes);
             console.log('GraphQL request body:', body);
             
             if (matchLeetCodeGraphQL(detail, 'submitCode')) {
                 console.log('Submission detected!');
-                pendingSubmissions.set(detail.tabId, { timestamp: Date.now(), retryCount: 0 });
+                pendingSubmissions.set(detail.tabId, { 
+                    timestamp: Date.now(), 
+                    retryCount: 0,
+                    hasDispatched: false 
+                });
                 return;
             }
         }
@@ -299,32 +318,36 @@ chrome.webRequest.onBeforeRequest.addListener(
         if (detail.url.includes('leetcode.com') && detail.url.includes('submit') && 
             detail.method === 'POST' && !detail.url.includes('/check/')) {
             console.log('Direct submission URL detected:', detail.url);
-            pendingSubmissions.set(detail.tabId, { timestamp: Date.now(), retryCount: 0, hasDispatched: false });
+            pendingSubmissions.set(detail.tabId, { 
+                timestamp: Date.now(), 
+                retryCount: 0, 
+                hasDispatched: false 
+            });
             return;
         }
     },
-    { urls: ['https://leetcode.com/*'] },
+    { urls: ['*://*.leetcode.com/*'] },
     ['requestBody']
 );
 
 chrome.webRequest.onCompleted.addListener(
     (detail: WebRequestDetails) => {
-        console.log('Request completed:', detail.url);
-        
         if (detail.url.includes('leetcode.com/submissions/detail/') && detail.url.includes('/check/')) {
             const submissionId = extractSubmissionId(detail.url);
             if (submissionId && pendingSubmissions.has(detail.tabId)) {
-                console.log(`Submission status check completed for ID: ${submissionId}`);
-                
                 const pending = pendingSubmissions.get(detail.tabId);
-                if (pending) {
+                
+                if (pending && !pending.hasDispatched && (!pending.submissionId || pending.submissionId === submissionId)) {
+                    console.log(`Processing submission check for ID: ${submissionId}`);
                     pending.submissionId = submissionId;
                     pendingSubmissions.set(detail.tabId, pending);
+                    
+                    setTimeout(() => {
+                        fetchSubmissionResult(submissionId, detail.tabId);
+                    }, 1000);
+                } else if (pending?.hasDispatched) {
+                    console.log('Skipping already processed submission');
                 }
-                
-                setTimeout(() => {
-                    fetchSubmissionResult(submissionId, detail.tabId);
-                }, 1000);
             }
         }
     },
