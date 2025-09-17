@@ -8,13 +8,13 @@ const banners = {
 export type Actions = keyof typeof banners
 
 const sounds = {
-    newItem: 'sounds/new-item.mp3',
-    enemyFailed: 'sounds/enemy-failed.mp3'
+    passed: 'sounds/passed.mp3',
+    wasted: 'sounds/wasted.mp3'
 } as const
 
 const bannerSounds: Record<keyof typeof banners, keyof typeof sounds> = {
-    submissionAccepted: 'newItem',
-    submissionRejected: 'enemyFailed'
+    submissionAccepted: 'passed',
+    submissionRejected: 'wasted'
 } as const;
 
 const animations = {
