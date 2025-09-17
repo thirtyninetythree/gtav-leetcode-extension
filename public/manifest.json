@@ -1,21 +1,21 @@
 {
-    "name": "Elden LeetCode",
-    "description": "Elden Ring experience for LeetCode",
+    "name": "GTAV LeetCode",
+    "description": "GTAV experience for LeetCode",
     "version": "1.0",
     "manifest_version": 3,
     "action": {
         "default_icon": {
-            "16": "assets/icon16.png",
-            "24": "assets/icon24.png",
-            "32": "assets/icon32.png"
+            "16": "assets/icon16.jpg",
+            "24": "assets/icon24.jpg",
+            "32": "assets/icon32.jpg"
         },
         "default_title": "My Extension Popup",
         "default_popup": "popup.html"
     },
     "icons": {
-        "16": "assets/icon16.png",
-        "48": "assets/icon48.png",
-        "128": "assets/icon128.png"
+        "16": "assets/icon16.jpg",
+        "48": "assets/icon48.jpg",
+        "128": "assets/icon128.jpg"
     },
     "permissions": [
     "webRequest", 

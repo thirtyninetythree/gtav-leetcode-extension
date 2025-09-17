@@ -12,7 +12,7 @@ export default defineConfig({
         outDir: 'dist',
         minify: false,
         lib: {
-            name: 'Elden LeetCode',
+            name: 'GTAV LeetCode',
             entry: {
                 background: resolve(__dirname, 'src/background.ts'),
                 content: resolve(__dirname, 'src/content.ts')
