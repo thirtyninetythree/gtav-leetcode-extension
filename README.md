@@ -1,6 +1,6 @@
 # Elden Ring LeetCode Extension
 
-Enhance your LeetCode experience with Elden Ring–inspired notifications and achievements.
+Enhance your LeetCode experience with GTAV–inspired notifications and achievements.
 
 ![Demo](demo-image.png)
 
@@ -27,7 +27,7 @@ Enhance your LeetCode experience with Elden Ring–inspired notifications and ac
 
 ## Features
 
-* Elden Ring–styled notifications for LeetCode submissions
+* GTAV–styled notifications for LeetCode submissions
 * Achievement system for coding milestones
 * Immersive, game-inspired UI elements
 
