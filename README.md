@@ -1,4 +1,4 @@
-# Elden Ring LeetCode Extension
+# GTAV LeetCode Extension
 
 Enhance your LeetCode experience with GTAV–inspired notifications and achievements.
 
