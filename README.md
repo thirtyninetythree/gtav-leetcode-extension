@@ -2,7 +2,7 @@
 
 Enhance your LeetCode experience with GTAV–inspired notifications and achievements.
 
-![Demo](demo-image.png)
+<img width="1366" height="768" alt="screenshot" src="https://github.com/user-attachments/assets/d57e9a48-e32e-442b-bf7b-f08cf50288b9" />
 
 ## Installation
 
@@ -37,4 +37,4 @@ Contributions are welcome. Please submit issues or enhancement requests.
 
 ## Credits
 
-Inspired by [this X post](https://x.com/saltyAom/status/1966608243167555734).
+Forked from the original: https://github.com/Indra55/Elden-ring-leetcode-extension
