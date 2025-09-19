@@ -2,7 +2,7 @@
 
 Enhance your LeetCode experience with GTAV–inspired notifications and achievements.
 
-<img width="1366" height="768" alt="screenshot" src="https://github.com/user-attachments/assets/d57e9a48-e32e-442b-bf7b-f08cf50288b9" />
+![screenshot](https://github.com/user-attachments/assets/409b0ece-840e-4a1c-9bfa-afd2b723f1df)
 
 ## Installation
 
@@ -30,6 +30,12 @@ Enhance your LeetCode experience with GTAV–inspired notifications and achievem
 * GTAV–styled notifications for LeetCode submissions
 * Achievement system for coding milestones
 * Immersive, game-inspired UI elements
+
+## Roadmap
+Just ideas. Doesn't mean I'm working on these!
+* A gold, silver or bronze basde depending on runtime/memory usage percentile
+* Sound from earlier titles e.g GTA SA
+
 
 ## Contributing
 
